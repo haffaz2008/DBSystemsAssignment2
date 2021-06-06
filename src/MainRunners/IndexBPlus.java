@@ -1,5 +1,7 @@
 package MainRunners;
 
+import IndexValues.IntegerKey;
+
 public class IndexBPlus {
     private static String input_file;
     private static int input_PageSize;
@@ -24,7 +26,7 @@ public class IndexBPlus {
 
     public static void run(String file, int page_Size)
     {
-//        dbIntIndexKey keyType = new dbIntIndexKey(0);
+//        IntegerKey keyType = new IntegerKey(0);
 //        dbIndexValue valueType = new dbIndexValue(0,0);
 //        bTreeRoot<dbIntIndexKey,dbIndexValue> rootNode = new bTreeRoot<dbIntIndexKey,dbIndexValue>(keyType, valueType);
 //
