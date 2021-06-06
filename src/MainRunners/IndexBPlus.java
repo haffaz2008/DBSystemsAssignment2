@@ -12,9 +12,9 @@ public class IndexBPlus {
         if(verifyArgs(args));
         {
             input_file = args[2];
-            input_PageSize = Integer.valueOf(args[1]);
+            input_PageSize = Integer.parseInt(args[1]);
         }
-        run();
+        run(input_file,input_PageSize);
     }
 
     private static boolean verifyArgs(String[] args)
@@ -22,8 +22,14 @@ public class IndexBPlus {
         return false;
     }
 
-    public static void run()
+    public static void run(String file, int page_Size)
     {
-
+//        dbIntIndexKey keyType = new dbIntIndexKey(0);
+//        dbIndexValue valueType = new dbIndexValue(0,0);
+//        bTreeRoot<dbIntIndexKey,dbIndexValue> rootNode = new bTreeRoot<dbIntIndexKey,dbIndexValue>(keyType, valueType);
+//
+//        dbEntityRow entityType = new dbEntityRow();
+//        dbBytePage<dbEntityRow> pageType = new dbBytePage<>(options.pageSize,entityType);
+//        dbEntityLoader<dbEntityRow,dbBytePage<dbEntityRow>> loader = new dbEntityLoader<>(options.file, pageType, entityType);
     }
 }
