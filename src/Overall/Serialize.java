@@ -1,5 +1,7 @@
 package Overall;
 
+import BaseClasses.BaseDbItemInterface;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
@@ -105,22 +107,22 @@ public class Serialize {
      * @throws UnsupportedEncodingException
      */
     @SuppressWarnings("unchecked")
-//    public static <T extends Idbentity<T>> byte[]  array(Object[] items, int size)
-//            throws UnsupportedEncodingException
-//    {
-//        byte[] DATA = new byte[size];
-//        int offset = 0;
-//        for(Object item : items){
-//            if(item == null){ return DATA; }
-//            byte[] TMP = ((T) item).serialize();
-//            if(offset + TMP.length > size){
-//                throw new UnsupportedEncodingException(String.format("Array serialize out of bounds items[%d] size[%d] itemSize[%d] sizeRequired[%d]", items.length, size, TMP.length, TMP.length * items.length));
-//            }
-//            System.arraycopy(TMP, 0, DATA, offset, TMP.length);
-//            offset += TMP.length;
-//        }
-//        return DATA;
-//    }
+    public static <T extends BaseDbItemInterface<T>> byte[]  array(Object[] items, int size)
+            throws UnsupportedEncodingException
+    {
+        byte[] DATA = new byte[size];
+        int offset = 0;
+        for(Object item : items){
+            if(item == null){ return DATA; }
+            byte[] TMP = ((T) item).serialize();
+            if(offset + TMP.length > size){
+                throw new UnsupportedEncodingException(String.format("Array serialize out of bounds items[%d] size[%d] itemSize[%d] sizeRequired[%d]", items.length, size, TMP.length, TMP.length * items.length));
+            }
+            System.arraycopy(TMP, 0, DATA, offset, TMP.length);
+            offset += TMP.length;
+        }
+        return DATA;
+    }
 
 
     public static <T extends Object> String arrayToString(T[] items, boolean returns){

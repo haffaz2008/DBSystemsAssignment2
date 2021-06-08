@@ -1,6 +1,8 @@
 package MainRunners;
 
-import IndexValues.IntegerKey;
+import IndexKeyValues.IntegerKey;
+import IndexKeyValues.Value;
+import Tree.Root;
 
 public class IndexBPlus {
     private static String input_file;
@@ -26,12 +28,12 @@ public class IndexBPlus {
 
     public static void run(String file, int page_Size)
     {
-//        IntegerKey keyType = new IntegerKey(0);
-//        dbIndexValue valueType = new dbIndexValue(0,0);
-//        bTreeRoot<dbIntIndexKey,dbIndexValue> rootNode = new bTreeRoot<dbIntIndexKey,dbIndexValue>(keyType, valueType);
-//
-//        dbEntityRow entityType = new dbEntityRow();
-//        dbBytePage<dbEntityRow> pageType = new dbBytePage<>(options.pageSize,entityType);
-//        dbEntityLoader<dbEntityRow,dbBytePage<dbEntityRow>> loader = new dbEntityLoader<>(options.file, pageType, entityType);
+        IntegerKey key = new IntegerKey(0);
+        Value value = new Value(0,0);
+        Root<IntegerKey,Value> rootNode = new Root<IntegerKey,Value>(key, value);
+
+        //dbEntityRow entityType = new dbEntityRow();
+       // dbBytePage<dbEntityRow> pageType = new dbBytePage<>(options.pageSize,entityType);
+        //dbEntityLoader<dbEntityRow,dbBytePage<dbEntityRow>> loader = new dbEntityLoader<>(options.file, pageType, entityType);
     }
 }

@@ -1,5 +1,7 @@
 package Overall;
 
+import BaseClasses.BaseDbItemInterface;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
@@ -79,21 +81,21 @@ public class Deserialize {
      * @return
      * @throws UnsupportedEncodingException
      */
-//    public static <T extends Idbentity<T> & Cloneable > Object[]  array(byte[] record, T type)
-//            throws UnsupportedEncodingException
-//    {
-//        Object[] items = new Object[record.length / type.getSize()];
-//        int offset = 0;
-//        int index = 0;
-//        while(offset + type.getSize() < record.length){
-//            byte[] TMP = new byte[type.getSize()];
-//            System.arraycopy(record, offset, TMP, 0, TMP.length);
-//            items[index] = type.deserialize(TMP);
-//            offset += TMP.length;
-//            index += 1;
-//        }
-//        return items;
-//    }
+    public static <T extends BaseDbItemInterface<T> & Cloneable > Object[]  array(byte[] record, T type)
+            throws UnsupportedEncodingException
+    {
+        Object[] items = new Object[record.length / type.getSize()];
+        int offset = 0;
+        int index = 0;
+        while(offset + type.getSize() < record.length){
+            byte[] TMP = new byte[type.getSize()];
+            System.arraycopy(record, offset, TMP, 0, TMP.length);
+            items[index] = type.deserialize(TMP);
+            offset += TMP.length;
+            index += 1;
+        }
+        return items;
+    }
 
 
 
