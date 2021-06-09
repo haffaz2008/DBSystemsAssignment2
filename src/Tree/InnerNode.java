@@ -13,9 +13,6 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
         this.allKeys = new Object[KEY_SIZE];
         this.children = new Object[CHILDREN_SIZE];
     }
-
-    //#region bTree
-    @SuppressWarnings("unchecked")
     public IndexNode<TKey,TValue> getChild(int index) {
         IndexNode<TKey,TValue> node = (IndexNode<TKey,TValue>)this.children[index];
         if(node != null && !node.isLoaded){
@@ -29,12 +26,10 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
         if (child != null)
             child.setParent(this);
     }
-
     @Override
     public NodeType getNodeType() {
         return NodeType.InnerNode;
     }
-
     @Override
     public int search(TKey key) {
         int index = 0;
@@ -53,10 +48,6 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
 
         return index;
     }
-
-
-    /* The codes below are used to support insertion operation */
-
     private void insertAt(int index, TKey key, IndexNode<TKey,TValue> leftChild, IndexNode<TKey,TValue> rightChild) {
         // move space for the new key
         for (int i = this.getKeyCount() + 1; i > index; --i) {
@@ -113,8 +104,6 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
             return this.getParent() == null ? this : null;
         }
     }
-
-
     public IndexNode<TKey,TValue> dealOverflow() {
         int midIndex = this.getKeyCount() / 2;
         TKey upKey = this.getKey(midIndex);
@@ -136,10 +125,6 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
         // push up a key to parent internal node
         return this.getParent().pushUpKey(upKey, this, newRNode);
     }
-
-
-    /* The codes below are used to support delete operation */
-
     private void deleteAt(int index) {
         int i = 0;
         for (i = index; i < this.getKeyCount() - 1; ++i) {
@@ -150,40 +135,31 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
         this.setChild(i + 1, null);
         --this.keyCount;
     }
-
-
     @Override
-    protected void processChildrenTransfer(IndexNode<TKey,TValue> borrower, IndexNode<TKey,TValue> lender, int borrowIndex) {
+    protected void moveChild(IndexNode<TKey,TValue> borrower, IndexNode<TKey,TValue> lender, int borrowIndex) {
         int borrowerChildIndex = 0;
         while (borrowerChildIndex < this.getKeyCount() + 1 && this.getChild(borrowerChildIndex) != borrower)
             ++borrowerChildIndex;
 
         if (borrowIndex == 0) {
             // borrow a key from right sibling
-            TKey upKey = borrower.transferFromSibling(this.getKey(borrowerChildIndex), lender, borrowIndex);
+            TKey upKey = borrower.getFromNeighbour(this.getKey(borrowerChildIndex), lender, borrowIndex);
             this.setKey(borrowerChildIndex, upKey);
         }
         else {
             // borrow a key from left sibling
-            TKey upKey = borrower.transferFromSibling(this.getKey(borrowerChildIndex - 1), lender, borrowIndex);
+            TKey upKey = borrower.getFromNeighbour(this.getKey(borrowerChildIndex - 1), lender, borrowIndex);
             this.setKey(borrowerChildIndex - 1, upKey);
         }
     }
-
     @Override
-    protected IndexNode<TKey,TValue> processChildrenFusion(IndexNode<TKey,TValue> leftChild, IndexNode<TKey,TValue> rightChild) {
+    protected IndexNode<TKey,TValue> childMerge(IndexNode<TKey,TValue> leftChild, IndexNode<TKey,TValue> rightChild) {
         int index = 0;
         while (index < this.getKeyCount() && this.getChild(index) != leftChild)
             ++index;
         TKey sinkKey = this.getKey(index);
-
-        // merge two children and the sink key into the left child node
-        leftChild.fusionWithSibling(sinkKey, rightChild);
-
-        // remove the sink key, keep the left child and abandon the right child
+        leftChild.mergeWithNeighbour(sinkKey, rightChild);
         this.deleteAt(index);
-
-        // check whether need to propagate borrow or fusion to parent
         if (this.isUnderflow()) {
             if (this.getParent() == null) {
                 // current node is root, only remove keys or delete the whole root node
@@ -195,16 +171,14 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
                     return null;
                 }
             }
-
             return this.dealUnderflow();
         }
-
         return null;
     }
 
 
     @Override
-    protected void fusionWithSibling(TKey sinkKey, IndexNode<TKey,TValue> rightSibling) {
+    protected void mergeWithNeighbour(TKey sinkKey, IndexNode<TKey,TValue> rightSibling) {
         InnerNode<TKey,TValue> rightSiblingNode = (InnerNode<TKey,TValue>)rightSibling;
 
         int j = this.getKeyCount();
@@ -224,7 +198,7 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
     }
 
     @Override
-    protected TKey transferFromSibling(TKey sinkKey, IndexNode<TKey,TValue> sibling, int borrowIndex) {
+    protected TKey getFromNeighbour(TKey sinkKey, IndexNode<TKey,TValue> sibling, int borrowIndex) {
         InnerNode<TKey,TValue> siblingNode = (InnerNode<TKey,TValue>)sibling;
 
         TKey upKey = null;
@@ -312,23 +286,12 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
     }
 
     @Override
-    public String detailedJsonString() {
+    public String detailedReadableString() {
         return Serialize.arrayToString(this.children, false);
 
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void fillIterator(Stats<TKey,TValue> items ,int depth) {
-        items.addNode(this, depth);
-        for (int i = 0; i < this.children.length; i ++) {
-            Object obj = this.getChild(i);
-            if(obj != null){
-                IndexNode<TKey,TValue> node = (IndexNode<TKey,TValue>) obj;
-                node.fillIterator(items, depth + 1);
-            }
-        }
-    }
 
     @Override
     public IndexNode<TKey, TValue> load() {

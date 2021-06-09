@@ -55,7 +55,7 @@ public class Key implements BaseDbItemInterface<Key>{
     public String toString() {
         return String.format("{ \"rId\": %d , \"pageId\": %d }", this.rId, this.pageId);
     }
-    public String toJsonString() {
+    public String toDisplayString() {
         return String.format(
                 "{rId:%d,pageId:%d}"
                 , this.rId, this.pageId);

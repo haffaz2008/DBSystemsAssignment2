@@ -121,12 +121,12 @@ public class Leaf<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TVa
     }
 
     @Override
-    protected void processChildrenTransfer(IndexNode<TKey,TValue> borrower, IndexNode<TKey,TValue> lender, int borrowIndex) {
+    protected void moveChild(IndexNode<TKey,TValue> borrower, IndexNode<TKey,TValue> lender, int borrowIndex) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected IndexNode<TKey,TValue> processChildrenFusion(IndexNode<TKey,TValue> leftChild, IndexNode<TKey,TValue> rightChild) {
+    protected IndexNode<TKey,TValue> childMerge(IndexNode<TKey,TValue> leftChild, IndexNode<TKey,TValue> rightChild) {
         throw new UnsupportedOperationException();
     }
 
@@ -134,7 +134,7 @@ public class Leaf<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TVa
      * Notice that the key sunk from parent is be abandoned.
      */
     @Override
-    protected void fusionWithSibling(TKey sinkKey, IndexNode<TKey,TValue> rightSibling) {
+    protected void mergeWithNeighbour(TKey sinkKey, IndexNode<TKey,TValue> rightSibling) {
         Leaf<TKey, TValue> siblingLeaf = (Leaf<TKey, TValue>)rightSibling;
 
         int j = this.getKeyCount();
@@ -150,7 +150,7 @@ public class Leaf<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TVa
     }
 
     @Override
-    protected TKey transferFromSibling(TKey sinkKey, IndexNode<TKey,TValue> sibling, int borrowIndex) {
+    protected TKey getFromNeighbour(TKey sinkKey, IndexNode<TKey,TValue> sibling, int borrowIndex) {
         Leaf<TKey, TValue> siblingNode = (Leaf<TKey, TValue>)sibling;
 
         this.insertKey(siblingNode.getKey(borrowIndex), siblingNode.getValue(borrowIndex));
@@ -200,17 +200,14 @@ public class Leaf<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TVa
         return DATA;
     }
 
-    @Override
-    public void fillIterator(Stats<TKey,TValue> items, int depth) {
-        items.addNode(this, depth);
-    }
+
 
     @Override
     public String toString() {
         return String.format("(leaf) size: %d  id %s keys %s", this.getSize(), this.key.toString(), Serialize.arrayToString(this.allKeys, false));
     }
     @Override
-    public String detailedJsonString() {
+    public String detailedReadableString() {
         return Serialize.arrayToString(this.values, false);
     }
 

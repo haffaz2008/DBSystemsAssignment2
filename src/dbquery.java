@@ -1,8 +1,6 @@
 
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,17 +16,96 @@ public class dbquery {
             return;
         }
 
+        int optionChosen;
+        String searchIdequality;
+        String searchIdRangeLower = null;
+        String searchIdRangeUpper = null;
+        long indexStart, indexEnd, indexTotal,
+                heapStart, heapEnd, heapTotal = -1;
+        while(true) {
 
-        String text = args[0];
-        int pageSize = Integer.parseInt(args[constants.DBQUERY_PAGE_SIZE_ARG]);
+            optionChosen = IndexBPlus.readInteger("Enter 1 for Equality Search, 2 For Range Search :");
+            if (!(optionChosen == 1 || optionChosen == 2)) {
+                System.out.println("That is not a valid input");
+                continue;
+            } else if (optionChosen == 1) {
+                searchIdequality = readString("Query Id Number :");
+                String text = searchIdequality;
+                long startTime= System.currentTimeMillis();
+                execute(text,args[constants.DBQUERY_PAGE_SIZE_ARG]);
+                long endTime = System.currentTimeMillis();
+                System.out.println("Query Execution Time(ms) = "+(endTime-startTime));
+            }else if(optionChosen ==2) {
+                searchIdRangeUpper = "";
+                searchIdRangeLower = readString("Enter the lower Id Number :");
+                boolean valid = false;
+                while (!valid) {
+                    searchIdRangeUpper = readString("Enter the upper Id Number :");
+                    if (Integer.parseInt(searchIdRangeUpper) > Integer.parseInt(searchIdRangeLower))
+                        valid = true;
+                    else
+                        System.out.println("Please enter a number higher than the Lower number");
+                }
 
-        String datafile = "./OutFiles/"+pageSize+".heap";
+
+                int lower = Integer.parseInt(searchIdRangeLower);
+                int upper = Integer.parseInt(searchIdRangeUpper);
+                long startTime = System.currentTimeMillis();
+                for (int i = lower; i <= upper; i++) {
+                    String text = "" + i;
+                    execute(text, args[constants.DBQUERY_PAGE_SIZE_ARG]);
+                }
+                long endTime = System.currentTimeMillis();
+                System.out.println("Query Execution Time(ms) = " + (endTime - startTime));
+            }
+
+                    }
+    }
+        public static Integer readInteger(String message){
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            while(true){
+                String input = "";
+                try{
+                    System.out.println(message);
+                    input = reader.readLine();
+                    if(input == "exit"){
+                        System.out.println("Exiting");
+                        System.exit(0);
+                    }
+                    int output = Integer.parseInt(input);
+                    return output;
+                }catch(Exception e){
+                    System.out.println("Could not cast "+ input+" to integer please enter an integer or (exit) to exit.");
+                }
+            }
+        }
+    public static String readString(String message){
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        while(true){
+            String input = "";
+            try{
+                System.out.println(message);
+                input = reader.readLine();
+                if(input == "exit"){
+                    System.out.println("Exiting");
+                    System.exit(0);
+                }
+
+                return input;
+            }catch(Exception e){
+                System.out.println("Error");
+            }
+        }
+    }
+    public static void execute(String text, String page_size) throws IOException {
+        int pageSize = Integer.parseInt(page_size);
+        String datafile = "./OutFiles/" + pageSize + ".heap";
         long startTime = 0;
         long finishTime = 0;
         int numBytesInOneRecord = constants.TOTAL_SIZE;
         int numBytesInSdtnameField = constants.STD_NAME_SIZE;
         int numBytesIntField = Integer.BYTES;
-        int numRecordsPerPage = pageSize/numBytesInOneRecord;
+        int numRecordsPerPage = pageSize / numBytesInOneRecord;
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
         byte[] page = new byte[pageSize];
         FileInputStream inStream = null;
@@ -36,7 +113,6 @@ public class dbquery {
         try {
             inStream = new FileInputStream(datafile);
             int numBytesRead = 0;
-            startTime = System.nanoTime();
             // Create byte arrays for each field
             byte[] sdtnameBytes = new byte[numBytesInSdtnameField];
             byte[] idBytes = new byte[constants.ID_SIZE];
@@ -56,7 +132,7 @@ public class dbquery {
                 for (int i = 0; i < numRecordsPerPage; i++) {
 
                     // Copy record's SdtName (field is located at multiples of the total record byte length)
-                    System.arraycopy(page, (i*numBytesInOneRecord), sdtnameBytes, 0, numBytesInSdtnameField);
+                    System.arraycopy(page, (i * numBytesInOneRecord), sdtnameBytes, 0, numBytesInSdtnameField);
 
                     // Check if field is empty; if so, end of all records found (packed organisation)
                     if (sdtnameBytes[0] == 0) {
@@ -85,16 +161,16 @@ public class dbquery {
                          *
                          * Copy the corresponding sections of "page" to the individual field byte arrays
                          */
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.ID_OFFSET), idBytes, 0, numBytesIntField);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.DATE_OFFSET), dateBytes, 0, constants.DATE_SIZE);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.YEAR_OFFSET), yearBytes, 0, numBytesIntField);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.MONTH_OFFSET), monthBytes, 0, constants.MONTH_SIZE);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.MDATE_OFFSET), mdateBytes, 0, numBytesIntField);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.DAY_OFFSET), dayBytes, 0, constants.DAY_SIZE);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.TIME_OFFSET), timeBytes, 0, numBytesIntField);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.SENSORID_OFFSET), sensorIdBytes, 0, numBytesIntField);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.SENSORNAME_OFFSET), sensorNameBytes, 0, constants.SENSORNAME_SIZE);
-                        System.arraycopy(page, ((i*numBytesInOneRecord) + constants.COUNTS_OFFSET), countsBytes, 0, numBytesIntField);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.ID_OFFSET), idBytes, 0, numBytesIntField);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.DATE_OFFSET), dateBytes, 0, constants.DATE_SIZE);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.YEAR_OFFSET), yearBytes, 0, numBytesIntField);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.MONTH_OFFSET), monthBytes, 0, constants.MONTH_SIZE);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.MDATE_OFFSET), mdateBytes, 0, numBytesIntField);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.DAY_OFFSET), dayBytes, 0, constants.DAY_SIZE);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.TIME_OFFSET), timeBytes, 0, numBytesIntField);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.SENSORID_OFFSET), sensorIdBytes, 0, numBytesIntField);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.SENSORNAME_OFFSET), sensorNameBytes, 0, constants.SENSORNAME_SIZE);
+                        System.arraycopy(page, ((i * numBytesInOneRecord) + constants.COUNTS_OFFSET), countsBytes, 0, numBytesIntField);
 
                         // Convert long data into Date object
                         Date date = new Date(ByteBuffer.wrap(dateBytes).getLong());
@@ -111,22 +187,16 @@ public class dbquery {
                 }
             }
 
-            finishTime = System.nanoTime();
-        }
-        catch (FileNotFoundException e) {
+
+        } catch (FileNotFoundException e) {
             System.err.println("File not found " + e.getMessage());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("IO Exception " + e.getMessage());
-        }
-        finally {
+        } finally {
 
             if (inStream != null) {
                 inStream.close();
             }
         }
-
-        long timeInMilliseconds = (finishTime - startTime)/constants.MILLISECONDS_PER_SECOND;
-        System.out.println("Time taken: " + timeInMilliseconds + " ms");
     }
 }

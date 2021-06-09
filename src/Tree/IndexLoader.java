@@ -1,12 +1,10 @@
 package Tree;
 
 import BaseClasses.BaseDbItemInterface;
-import BaseClasses.BaseItem;
 import ItemSerializer.BaseItemSerializer;
 import ItemSerializer.ItemNumberSelector;
 import Loaders.BaseItemLoader;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -14,6 +12,10 @@ public class IndexLoader <TKey extends Comparable<TKey> & BaseDbItemInterface<TK
 
     public BaseItemLoader<IndexNode<TKey,TValue> , BaseItemSerializer<IndexNode<TKey,TValue>>> leafStore;
     public BaseItemLoader<IndexNode<TKey,TValue> ,BaseItemSerializer<IndexNode<TKey,TValue>>> innerStore;
+    private Leaf<TKey,TValue> leafType;
+    private ItemNumberSelector<IndexNode<TKey,TValue>> leafPageType;
+    private InnerNode<TKey,TValue> innerType;
+    private ItemNumberSelector<IndexNode<TKey,TValue>> innerPageType;
 
 
     public InnerNode<TKey,TValue> loadInnerNode(InnerNode<TKey,TValue> unloadedNode)
@@ -53,8 +55,6 @@ public class IndexLoader <TKey extends Comparable<TKey> & BaseDbItemInterface<TK
 
     }
 
-
-
     public void addLeafNode(Leaf<TKey,TValue> loadedNode) throws UnsupportedEncodingException, IOException
     {
         this.leafStore.insertEntity(loadedNode);
@@ -64,25 +64,6 @@ public class IndexLoader <TKey extends Comparable<TKey> & BaseDbItemInterface<TK
     {
         this.innerStore.insertEntity(loadedNode);
     }
-
-    public void connect() throws FileNotFoundException {
-        this.innerStore.connect();
-        this.leafStore.connect();
-    }
-
-    public void close(){
-        this.innerStore.close();
-        this.leafStore.close();
-    }
-
-
-
-
-    private Leaf<TKey,TValue> leafType;
-    private ItemNumberSelector<IndexNode<TKey,TValue>> leafPageType;
-
-    private InnerNode<TKey,TValue> innerType;
-    private ItemNumberSelector<IndexNode<TKey,TValue>> innerPageType;
 
     public IndexLoader(String leafNodeStore, String innerNodeStore, int pageQnt, Root<TKey,TValue> root) {
 

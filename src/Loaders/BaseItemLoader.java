@@ -15,6 +15,8 @@ import java.util.Map;
 public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseItemSerializer<Item>> extends DummyDBCreator implements Iterable<Item> {
     private StorageBase<TPage> pageType;
     private StorageBase<Item> entityType;
+    private TPage cachedPage;
+    private Key cachedKey;
 
 
 
@@ -22,7 +24,7 @@ public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseIt
             implements Iterator<TEntity> {
         private BaseItemLoader<TEntity, TPage> loader;
         private TEntity nextEntity;
-        private boolean doneloading = false;
+        private boolean doneLoad = false;
 
         EntityIterator(BaseItemLoader<TEntity, TPage> loader) {
             this.loader = loader;
@@ -33,7 +35,7 @@ public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseIt
             Key nextKey = this.loader.getNextKey();
             try {
                 this.loader.validateKey(nextKey);
-                return true && this.doneloading == false;
+                return true && this.doneLoad == false;
             } catch (Exception e) {
                 return false;
             }
@@ -60,7 +62,7 @@ public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseIt
                     this.loader.setLastKey(key);
                 }
                 if(nextEntity.key.getPageId() != key.getPageId() && nextEntity.key.getRId() != key.getRId()){
-                    this.doneloading = true;
+                    this.doneLoad = true;
                 }
 
                 return entity;
@@ -75,7 +77,6 @@ public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseIt
         }
 
     }
-
 
     public BaseItemLoader(String datastorePath, StorageBase<TPage> pageType, StorageBase<Item> entityType) {
         super(datastorePath);
@@ -124,20 +125,6 @@ public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseIt
         return dto;
     }
 
-    public Item saveEntity(Item entity) throws FileNotFoundException, IOException, Exception {
-        this.validateKey(entity.getKey());
-        byte[] data = entity.serialize();
-        this.write(this.getIndex(entity.getKey()), data);
-        return entity;
-    }
-
-    public TPage findPage(Key key) throws IOException {
-        long pageIndex = this.getPageIndex(key);
-        System.out.println("Getting page at index " + pageIndex);
-        byte[] PAGE = this.read(pageIndex, this.pageType.getSize());
-        return this.pageType.deserialize(PAGE);
-    }
-
     public TPage savePage(TPage page) throws UnsupportedEncodingException, IOException {
         long pageIndex = this.getPageIndex(page.getKey());
         byte[] PAGE = page.serialize();
@@ -145,8 +132,6 @@ public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseIt
         return page;
     }
 
-    private TPage cachedPage;
-    private Key cachedKey;
     protected Key getNextKey(){
         if(this.cachedKey == null){ return new Key(0, 0); }
         if (this.pageType.getSize() < (this.cachedKey.getRId() + 2) * this.entityType.getSize()) {

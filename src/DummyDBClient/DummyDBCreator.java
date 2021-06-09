@@ -65,28 +65,6 @@ public class DummyDBCreator {
         this.file.seek(index);
         this.file.write(data);
     }
-    public void append(byte[] data)
-            throws IOException
-    {
-        this.file.seek(this.datastoreSize);
-        this.file.write(data);
-        this.datastoreSize += data.length;
-    }
 
-    public void swap(long fromIndex,long toIndex, int size)
-            throws IOException
-    {
-        byte[] src = this.read(fromIndex, size);
-        byte[] dest = this.read(toIndex, size);
-        this.write(toIndex, src);
-        this.write(fromIndex, dest);
-    }
-
-    public void truncate(int size)
-            throws IOException
-    {
-        this.file.setLength(this.datastoreSize - size);
-        this.datastoreSize -= size;
-    }
 
 }

@@ -67,15 +67,4 @@ public class Root <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey> , T
         return (Leaf<TKey, TValue>)node;
     }
 
-    public Iterator<IndexNode<TKey,TValue>> iterator() {
-        Stats<TKey,TValue> stats = this.stats();
-        return stats.nodes.iterator();
-    }
-
-    public Stats<TKey,TValue> stats(){
-        Stats<TKey,TValue> stats = new Stats<>();
-        this.root.fillIterator(stats, 0);
-        return stats;
-    }
-
 }

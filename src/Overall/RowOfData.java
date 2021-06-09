@@ -8,9 +8,6 @@ import java.io.UnsupportedEncodingException;
 
 public class RowOfData extends BaseItem<RowOfData> {
 
-    //#region Static Sizes and Offsets
-    /* Fixed Variable Lengths */
-
     /* Sizes */
     public static final int ID_SIZE = 4;
     public static final int DATETIME_SIZE = 22;
@@ -62,7 +59,6 @@ public class RowOfData extends BaseItem<RowOfData> {
     public static final int HOURLYCOUNT_OFFSET = SENSORNAME_OFFSET + SENSORNAME_SIZE;
 
     //#endregion
-
 
     public int id;
     public String date;
@@ -120,31 +116,31 @@ public class RowOfData extends BaseItem<RowOfData> {
     public RowOfData deserialize(byte[] record)
             throws UnsupportedEncodingException
     {
-        RowOfData dto   = new RowOfData();
+        RowOfData rowOfData   = new RowOfData();
         Key key      = new Key();
-        dto.key        = key.deserialize(
+        rowOfData.key        = key.deserialize(
                 Deserialize.bytes(  record, Key.CONTENT_SIZE    ,  DBKEY_OFFSET     ));
-        dto.id         = Deserialize.integer(    record, ID_SIZE          ,  ID_OFFSET         );
-        //System.out.println("deserialized.id "+dto.id);
-        dto.date       = Deserialize.string( record, DATETIME_SIZE    ,  DATETIME_OFFSET   );
-        //System.out.println("deserialized.date "+dto.date);
-        dto.year       = Deserialize.integer(    record, YEAR_SIZE        ,  YEAR_OFFSET       );
-        //System.out.println("deserialized.year "+dto.year);
-        dto.month      = Deserialize.string( record, MONTH_SIZE       ,  MONTH_OFFSET      );
-        //System.out.println("deserialized.month "+dto.month);
-        dto.mDate      = Deserialize.integer(    record, MDATE_SIZE       ,  MDATE_OFFSET      );
-        //System.out.println("deserialized.mDate "+dto.mDate);
-        dto.day        = Deserialize.string( record, DAY_SIZE         ,  DAY_OFFSET        );
-        //System.out.println("deserialized.day "+dto.day);
-        dto.time       = Deserialize.integer(    record, TIME_SIZE        ,  TIME_OFFSET       );
-        //System.out.println("deserialized.time "+dto.time);
-        dto.sensorId   = Deserialize.integer(    record, SENSORID_SIZE    ,  SENSORID_OFFSET   );
-        //System.out.println("deserialized.sensorId "+dto.sensorId);
-        dto.sensorName = Deserialize.string( record, SENSORNAME_SIZE  ,  SENSORNAME_OFFSET );
-        //System.out.println("deserialized.sensorName "+dto.sensorName);
-        dto.hourlyCount= Deserialize.integer(    record, HOURLYCOUNT_SIZE ,  HOURLYCOUNT_OFFSET);
-        //System.out.println("deserialized.hourlyCount "+dto.hourlyCount);
-        return dto;
+        rowOfData.id         = Deserialize.integer(    record, ID_SIZE          ,  ID_OFFSET         );
+        //System.out.println("deserialized.id "+rowOfData.id);
+        rowOfData.date       = Deserialize.string( record, DATETIME_SIZE    ,  DATETIME_OFFSET   );
+        //System.out.println("deserialized.date "+rowOfData.date);
+        rowOfData.year       = Deserialize.integer(    record, YEAR_SIZE        ,  YEAR_OFFSET       );
+        //System.out.println("deserialized.year "+rowOfData.year);
+        rowOfData.month      = Deserialize.string( record, MONTH_SIZE       ,  MONTH_OFFSET      );
+        //System.out.println("deserialized.month "+rowOfData.month);
+        rowOfData.mDate      = Deserialize.integer(    record, MDATE_SIZE       ,  MDATE_OFFSET      );
+        //System.out.println("deserialized.mDate "+rowOfData.mDate);
+        rowOfData.day        = Deserialize.string( record, DAY_SIZE         ,  DAY_OFFSET        );
+        //System.out.println("deserialized.day "+rowOfData.day);
+        rowOfData.time       = Deserialize.integer(    record, TIME_SIZE        ,  TIME_OFFSET       );
+        //System.out.println("deserialized.time "+rowOfData.time);
+        rowOfData.sensorId   = Deserialize.integer(    record, SENSORID_SIZE    ,  SENSORID_OFFSET   );
+        //System.out.println("deserialized.sensorId "+rowOfData.sensorId);
+        rowOfData.sensorName = Deserialize.string( record, SENSORNAME_SIZE  ,  SENSORNAME_OFFSET );
+        //System.out.println("deserialized.sensorName "+rowOfData.sensorName);
+        rowOfData.hourlyCount= Deserialize.integer(    record, HOURLYCOUNT_SIZE ,  HOURLYCOUNT_OFFSET);
+        //System.out.println("deserialized.hourlyCount "+rowOfData.hourlyCount);
+        return rowOfData;
     }
 
 
