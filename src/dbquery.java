@@ -1,4 +1,4 @@
-import MainRunners.constants;
+
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,10 +18,11 @@ public class dbquery {
             return;
         }
 
+
         String text = args[0];
         int pageSize = Integer.parseInt(args[constants.DBQUERY_PAGE_SIZE_ARG]);
 
-        String datafile = "heap." + pageSize;
+        String datafile = "./OutFiles/"+pageSize+".heap";
         long startTime = 0;
         long finishTime = 0;
         int numBytesInOneRecord = constants.TOTAL_SIZE;

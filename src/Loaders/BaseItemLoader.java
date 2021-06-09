@@ -11,8 +11,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseItemSerializer<Item>> extends DummyDBCreator implements Iterable<Item> {
     private StorageBase<TPage> pageType;
@@ -50,15 +48,15 @@ public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseIt
 
                 if(nextEntity == null){
                     key = this.loader.getNextKey();
-                    entity = this.loader.findEntity(key);
+                    entity = this.loader.findId(key);
                     this.loader.setLastKey(key);
                     key =this.loader.getNextKey();
-                    this.nextEntity = this.loader.findEntity(key);
+                    this.nextEntity = this.loader.findId(key);
                     this.loader.setLastKey(key);
                 }else{
                     entity = this.nextEntity;
                     key = this.loader.getNextKey();
-                    this.nextEntity = this.loader.findEntity(key);
+                    this.nextEntity = this.loader.findId(key);
                     this.loader.setLastKey(key);
                 }
                 if(nextEntity.key.getPageId() != key.getPageId() && nextEntity.key.getRId() != key.getRId()){
@@ -115,7 +113,7 @@ public class BaseItemLoader<Item extends StorageBase<Item>, TPage extends BaseIt
         return key.getIndex(this.pageType.getSize(), 0);
     }
     public Map<Key,Item> cache = new HashMap<>();
-    public Item findEntity(Key key) throws FileNotFoundException, IOException, Exception {
+    public Item findId(Key key) throws FileNotFoundException, IOException, Exception {
         this.validateKey(key);
         if(this.cache.containsKey(key)){
             return this.cache.get(key);

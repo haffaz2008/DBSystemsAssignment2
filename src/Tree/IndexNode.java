@@ -172,6 +172,27 @@ public abstract class IndexNode <TKey extends Comparable<TKey> & BaseDbItemInter
         this.loader = loader;
     }
 
+    public IndexNode<TKey,TValue> dealOverflow() {
+        int midIndex = this.getKeyCount() / 2;
+        TKey upKey = this.getKey(midIndex);
+
+        IndexNode<TKey,TValue> newRNode = this.split();
+
+        if (this.getParent() == null) {
+            this.setParent(new InnerNode<TKey,TValue>(this.keyType, this.valueType));
+        }
+        newRNode.setParent(this.getParent());
+
+        // maintain links of sibling nodes
+        newRNode.setLeftSibling(this);
+        newRNode.setRightSibling(this.rightSibling);
+        if (this.getRightSibling() != null)
+            this.getRightSibling().setLeftSibling(newRNode);
+        this.setRightSibling(newRNode);
+
+        // push up a key to parent internal node
+        return this.getParent().pushUpKey(upKey, this, newRNode);
+    }
 
     abstract IndexNode<TKey,TValue> newInstance();
 

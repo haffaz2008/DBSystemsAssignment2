@@ -42,6 +42,6 @@ public class Value implements BaseDbItemInterface<Value> {
     }
     @Override
     public String toString() {
-        return String.format("JSON(lookupKey)=>{ \"rId\": %d , \"pageId\": %d }", this.searchKey.getRId(), this.searchKey.getPageId());
+        return String.format("{ \"rId\": %d , \"pageId\": %d }", this.searchKey.getRId(), this.searchKey.getPageId());
     }
 }

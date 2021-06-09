@@ -79,7 +79,7 @@ public class RowOfData extends BaseItem<RowOfData> {
 
 
 
-    RowOfData initialize(String[] in, Key key)
+    public RowOfData initialize(String[] in, Key key)
             throws UnsupportedEncodingException
     {
         byte[] record = new byte[this.getSize()];
@@ -156,7 +156,7 @@ public class RowOfData extends BaseItem<RowOfData> {
 
     @Override
     public String toString() {
-        return String.format("JSON(dbEntityRow)=>{ \"pageid\": %d, \"rid\": %d, \"size\": %d, \"id\": %d, \"date\": \"%s\", \"year\": %d, \"month\": \"%s\", \"mDate\": %d, \"day\": \"%s\", \"time\": %d, \"sensorId\": %d, \"sensorName\": \"%s\", \"hourlyCount\": %d }",
+        return String.format( "\npageid\": %d, \"rid\": %d, \"size\": %d, \"id\": %d, \"date\": \"%s\", \"year\": %d, \"month\": \"%s\", \"mDate\": %d, \"day\": \"%s\", \"time\": %d, \"sensorId\": %d, \"sensorName\": \"%s\", \"hourlyCount\": %d }",
                 this.key.getPageId()
                 ,this.key.getRId()
                 ,this.getSize()

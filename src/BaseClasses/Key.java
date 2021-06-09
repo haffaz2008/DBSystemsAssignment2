@@ -53,7 +53,7 @@ public class Key implements BaseDbItemInterface<Key>{
     }
     @Override
     public String toString() {
-        return String.format("JSON(dbkey)=>{ \"rId\": %d , \"pageId\": %d }", this.rId, this.pageId);
+        return String.format("{ \"rId\": %d , \"pageId\": %d }", this.rId, this.pageId);
     }
     public String toJsonString() {
         return String.format(

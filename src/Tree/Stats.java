@@ -21,7 +21,7 @@ public class Stats <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, T
         }
         this.nodes.add(node);
         this.depths.add(depth);
-        if(node.getNodeType().compareTo("Inner Node") == 0){
+        if(node.getNodeType() == NodeType.InnerNode){
             this.innerCount += 1;
         }else{
             this.leafCount += 1;

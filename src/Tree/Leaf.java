@@ -1,18 +1,19 @@
 package Tree;
 
+
 import BaseClasses.BaseDbItemInterface;
 import Overall.Deserialize;
 import Overall.Serialize;
 
 import java.io.UnsupportedEncodingException;
 
-public class Leaf <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TValue extends BaseDbItemInterface<TValue>>  extends IndexNode<TKey, TValue>{
+public class Leaf<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TValue extends BaseDbItemInterface<TValue>>  extends IndexNode<TKey, TValue> {
 
     private Object[] values;
 
     public Leaf(TKey keyType, TValue valueType) {
         super(keyType, valueType);
-        this.keys = new Object[KEY_SIZE];
+        this.allKeys = new Object[KEY_SIZE];
         this.values = new Object[VALUE_SIZE];
     }
 
@@ -26,8 +27,8 @@ public class Leaf <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TV
     }
 
     @Override
-    public String getNodeType() {
-        return "LeafNode";
+    public NodeType getNodeType() {
+        return NodeType.LeafNode;
     }
 
     @Override
@@ -92,26 +93,6 @@ public class Leaf <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TV
     @Override
     protected IndexNode<TKey,TValue> pushUpKey(TKey key, IndexNode<TKey,TValue> leftChild, IndexNode<TKey,TValue> rightNode) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected void processChildrenTransfer(dbIndexNode<TKey, TValue> borrower, dbIndexNode<TKey, TValue> lender, int borrowIndex) {
-
-    }
-
-    @Override
-    protected dbIndexNode<TKey, TValue> processChildrenFusion(dbIndexNode<TKey, TValue> leftChild, dbIndexNode<TKey, TValue> rightChild) {
-        return null;
-    }
-
-    @Override
-    protected void fusionWithSibling(TKey sinkKey, dbIndexNode<TKey, TValue> rightSibling) {
-
-    }
-
-    @Override
-    protected TKey transferFromSibling(TKey sinkKey, dbIndexNode<TKey, TValue> sibling, int borrowIndex) {
-        return null;
     }
 
 
@@ -203,7 +184,7 @@ public class Leaf <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TV
         this.values = Deserialize.array(
                 Deserialize.bytes(DATA, this.valueListSize(), this.valueListOffset()), this.valueType
         );
-        return (LeafNode<TKey,TValue>) this.clone();
+        return (Leaf<TKey,TValue>) this.clone();
     }
 
     @Override
@@ -220,13 +201,13 @@ public class Leaf <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TV
     }
 
     @Override
-    public void fillIterator(bTreeStats<TKey,TValue> items, int depth) {
+    public void fillIterator(Stats<TKey,TValue> items, int depth) {
         items.addNode(this, depth);
     }
 
     @Override
     public String toString() {
-        return String.format("(leaf) size: %d  id %s keys %s", this.getSize(), this.key.toString(), Serialize.arrayToString(this.keys, false));
+        return String.format("(leaf) size: %d  id %s keys %s", this.getSize(), this.key.toString(), Serialize.arrayToString(this.allKeys, false));
     }
     @Override
     public String detailedJsonString() {
@@ -238,3 +219,4 @@ public class Leaf <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>, TV
         return this.loader.loadLeafNode(this);
     }
 }
+

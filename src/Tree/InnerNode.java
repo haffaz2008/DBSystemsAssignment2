@@ -31,8 +31,8 @@ public class InnerNode<TKey extends Comparable<TKey> & BaseDbItemInterface<TKey>
     }
 
     @Override
-    public String getNodeType() {
-        return "Inner Node";
+    public NodeType getNodeType() {
+        return NodeType.InnerNode;
     }
 
     @Override

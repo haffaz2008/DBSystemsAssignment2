@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Assignment2-DatabaseSystemss3773788:jar3">
+    <output-path>$PROJECT_DIR$/out/artifacts/Assignment2_DatabaseSystemss3773788_jar3</output-path>
+    <root id="archive" name="Assignment2-DatabaseSystemss3773788.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$USER_HOME$/OneDrive/Attachments/Desktop/Heap test/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="Assignment2-DatabaseSystemss3773788" />
+    </root>
+  </artifact>
+</component>

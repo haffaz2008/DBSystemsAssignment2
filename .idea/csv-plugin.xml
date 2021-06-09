@@ -17,6 +17,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\src\DummyDBClient\DummyDBCreator.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\IndexBPlus.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\src\IndexValues\Value.java">
           <value>
             <Attribute>
@@ -46,6 +60,13 @@
           </value>
         </entry>
         <entry key="\src\MainRunners\IndexBPlus.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\MainRunners\Load.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

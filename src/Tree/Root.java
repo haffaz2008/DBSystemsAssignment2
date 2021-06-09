@@ -8,7 +8,7 @@ public class Root <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey> , T
     protected IndexNode<TKey, TValue> root;
 
     public Root(TKey keyType, TValue valueType) {
-        this.root = new dbLeafNode<TKey, TValue>(keyType,valueType);
+        this.root = new Leaf<TKey, TValue>(keyType,valueType);
     }
     public IndexNode<TKey, TValue> getNode(){
         return this.root;
@@ -59,7 +59,7 @@ public class Root <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey> , T
      */
     private Leaf<TKey, TValue> findLeafNodeShouldContainKey(TKey key) {
         IndexNode<TKey, TValue> node = this.root;
-        while (node.getNodeType().compareTo("Inner Node") == 0) {
+        while (node.getNodeType() == NodeType.InnerNode) {
             int nextNode = node.search(key);
             node = ((InnerNode<TKey, TValue>)node).getChild(nextNode);
         }

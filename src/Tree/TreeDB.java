@@ -1,10 +1,12 @@
 package Tree;
 
+import BaseClasses.BaseDbItemInterface;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
-public class TreeDB <TKey extends Comparable<TKey> & Idbentity<TKey> , TValue extends Idbentity<TValue> > extends dbIndexNodeLoader<TKey, TValue> {
+public class TreeDB <TKey extends Comparable<TKey> & BaseDbItemInterface<TKey> , TValue extends BaseDbItemInterface<TValue>> extends IndexLoader<TKey, TValue> {
     private Root<TKey,TValue> root;
     public TreeDB(String datastorePath, int pageSize,Root<TKey,TValue> root) {
         super(datastorePath+".leaf.heap", datastorePath+".inner.heap", pageSize, root);
@@ -18,9 +20,9 @@ public class TreeDB <TKey extends Comparable<TKey> & Idbentity<TKey> , TValue ex
             IndexNode<TKey,TValue> node = iter.next();
 
 
-            if(node.getNodeType().compareTo("Inner Node") == 0){
+            if(node.getNodeType() == NodeType.InnerNode){
                 this.addInnerNode((InnerNode<TKey,TValue>) node);
-            }else if(node.getNodeType().compareTo("Leaf Node") == 0){
+            }else if(node.getNodeType() == NodeType.LeafNode){
                 this.addLeafNode((Leaf<TKey,TValue>) node);
             }else{
                 throw new UnsupportedEncodingException("Unknown Node type");

@@ -8,7 +8,7 @@ import java.io.RandomAccessFile;
 public class DummyDBCreator {
     private String datastorePath = "";
     private long datastoreSize = -1;
-    private RandomAccessFile raf;
+    private RandomAccessFile file;
 
     public DummyDBCreator(String datastorePath) {
         this.datastorePath = datastorePath;
@@ -18,7 +18,7 @@ public class DummyDBCreator {
 
         if(this.datastoreSize !=  -1 ) { return this.datastoreSize; }
         try {
-            this.datastoreSize = raf.length();
+            this.datastoreSize = file.length();
         } catch( IOException e){
             System.out.println("Error Loading Data Store File Size. "+e.toString());
         }
@@ -30,21 +30,21 @@ public class DummyDBCreator {
     {
         if(!this.isInitialized()){
             File file = new File(this.datastorePath);
-            this.raf = new RandomAccessFile(file, "rw");
+            this.file = new RandomAccessFile(file, "rw");
             this.datastoreSize = this.getDataStoreSize();
         }
     }
 
     public boolean isInitialized(){
-        return this.raf != null;
+        return this.file != null;
     }
 
     public void close()
     {
-        if(this.raf != null){
+        if(this.file != null){
             try{
-                this.raf.close();
-                this.raf = null;
+                this.file.close();
+                this.file = null;
             }catch(IOException e){
                 System.out.println("Error Closing Connection ["+e.toString()+"]");
             }
@@ -54,22 +54,22 @@ public class DummyDBCreator {
     public byte[] read(long index, int size)
             throws IOException
     {
-        this.raf.seek(index);
+        this.file.seek(index);
         byte[] DATA = new byte[size];
-        this.raf.read(DATA);
+        this.file.read(DATA);
         return DATA;
     }
     public void write(long index, byte[] data)
             throws IOException
     {
-        this.raf.seek(index);
-        this.raf.write(data);
+        this.file.seek(index);
+        this.file.write(data);
     }
     public void append(byte[] data)
             throws IOException
     {
-        this.raf.seek(this.datastoreSize);
-        this.raf.write(data);
+        this.file.seek(this.datastoreSize);
+        this.file.write(data);
         this.datastoreSize += data.length;
     }
 
@@ -85,7 +85,7 @@ public class DummyDBCreator {
     public void truncate(int size)
             throws IOException
     {
-        this.raf.setLength(this.datastoreSize - size);
+        this.file.setLength(this.datastoreSize - size);
         this.datastoreSize -= size;
     }
 

@@ -83,17 +83,24 @@ public class Serialize {
      * @param entry
      * @param size
      * @return
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException, ArrayIndexOutOfBoundsException
      */
     public static byte[] string(String entry, int size)
-            throws UnsupportedEncodingException
+            throws UnsupportedEncodingException,ArrayIndexOutOfBoundsException
     {
         byte[] DATA = new byte[size];
         byte[] SRC = entry.trim().getBytes(ENCODING);
         if (entry != "")
         {
-            System.arraycopy(SRC, 0,
-                    DATA, 0, SRC.length);
+            try{
+
+                System.arraycopy(SRC, 0,
+                        DATA, 0, SRC.length);
+            }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+
+        }
         }
         return DATA;
     }
